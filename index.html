@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle,#050506,#000);
+    font-family: Arial;
+    color: white;
+    overflow: hidden;
+}
+
+/* ФОН (БЕЗ ЛАГОВ) */
+body::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(rgba(0,255,150,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,150,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes gridMove {
+    from { background-position: 0 0; }
+    to { background-position: 200px 200px; }
+}
+
+/* КОНТЕЙНЕР */
+.container {
+    text-align: center;
+    z-index: 2;
+}
+
+/* ТЕКСТ */
+.title {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+/* КРУГ */
+.circle {
+    position: relative;
+    margin: 40px auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle,#111,#000);
+    box-shadow: 0 0 30px rgba(0,255,150,0.1);
+}
+
+/* НЕОН КРУГ */
+.circle::before {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 2px solid rgba(0,255,150,0.2);
+    animation: rotate 6s linear infinite;
+}
+
+@keyframes rotate {
+    from {transform: rotate(0);}
+    to {transform: rotate(360deg);}
+}
+
+/* ТЕКСТ */
+.value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #00ff99;
+    text-shadow: 0 0 8px rgba(0,255,150,0.5);
+}
+
+/* СКАН */
+.scan {
+    animation: pulse 0.8s infinite;
+}
+
+@keyframes pulse {
+    0% {opacity: 0.5;}
+    50% {opacity: 1;}
+    100% {opacity: 0.5;}
+}
+
+/* POP */
+.pop {
+    animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+    0% {transform: scale(0.7);}
+    100% {transform: scale(1);}
+}
+
+/* КНОПКА */
+.button {
+    width: 260px;
+    margin: 20px auto;
+    background: linear-gradient(90deg,#00ff99,#00c853);
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.button:active {
+    transform: scale(0.96);
+}
+
+/* УРОВНИ */
+.levels button {
+    margin: 5px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
+.active {
+    background: #ffd600 !important;
+    color: black;
+    box-shadow: 0 0 10px #ffd600;
+}
+
+/* LIVE */
+.live {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 13px;
+    opacity: 0;
+    transition: 0.3s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="title">HACK BOT</div>
+<div class="subtitle">AI Soft v2.0</div>
+
+<div class="circle">
+    <div id="result" class="value">AI</div>
+</div>
+
+<div class="button" onclick="predict()">PREDICT</div>
+
+<div>Level:</div>
+
+<div class="levels">
+    <button onclick="setLevel('easy')">Easy</button>
+    <button onclick="setLevel('medium')" class="active">Medium</button>
+    <button onclick="setLevel('hard')">Hard</button>
+    <button onclick="setLevel('hardcore')">Hardcore</button>
+</div>
+
+</div>
+
+<div id="live" class="live"></div>
+
+<script>
+
+let level = "medium";
+
+function setLevel(l) {
+    level = l;
+    document.querySelectorAll(".levels button").forEach(b => b.classList.remove("active"));
+    event.target.classList.add("active");
+}
+
+const data = {
+    easy: ["1.30x","1.56x","2.12x","2.70x","2.96x","3.28x","4.11x"],
+    medium: ["1.42x","1.75x","1.98x","2.28x","2.47x","2.70x","3.28x"],
+    hard: ["1.46x","1.83x","2.31x","2.95x","3.82x","5.02x"],
+    hardcore: ["1.44x","2.21x","3.45x"]
+};
+
+function predict() {
+    let el = document.getElementById("result");
+
+    el.classList.remove("pop");
+    el.classList.add("scan");
+    el.innerHTML = "...";
+
+    setTimeout(() => {
+        let arr = data[level];
+        let random = arr[Math.floor(Math.random() * arr.length)];
+
+        el.innerHTML = random;
+        el.classList.remove("scan");
+        el.classList.add("pop");
+
+    }, 1200);
+}
+
+const names = ["Alex","Mark","Vadim","Vanea","Bodea","Cristinel","Serioja","Dima"];
+
+function liveWins() {
+    let name = names[Math.floor(Math.random()*names.length)];
+    let x = (Math.random()*5+1).toFixed(2);
+
+    let el = document.getElementById("live");
+
+    el.style.opacity = "0";
+
+    setTimeout(() => {
+        el.innerHTML = name + " won " + x + "x";
+        el.style.opacity = "1";
+    }, 200);
+}
+
+setInterval(liveWins, 2000);
+
+</script>
+
+</body>
+</html>
